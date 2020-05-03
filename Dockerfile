@@ -1,9 +1,20 @@
 FROM ubuntu:bionic
 
+# This is the user that will execute most of the commands within the docker
+# container.
+ARG PLAYGROUND_USER="neo"
+ARG PLAYGROUND_USER_PASSWORD="agentsmith"
+
+# Install the things that need root access first.
+USER root
+
 # Install Java 8. Note Java 9+ is not compatible with Spark 2.4.+.
 # See https://stackoverflow.com/questions/51330840/why-apache-spark-does-not-work-with-java-10-we-get-illegal-reflective-then-java
+# We clean up apt cache to reduce image size as mentioned here:
+# https://docs.docker.com/develop/develop-images/dockerfile_best-practices/#run
 RUN apt-get update \
     && apt-get install -y \
+        sudo \
         unzip \
         nano \
         wget \
@@ -14,19 +25,13 @@ RUN apt-get update \
         ssh \
         openjdk-8-jdk \
         python3 \
-        python3-pip
+        python3-dev \
+        python3-pip \
+ && rm -rf /var/lib/apt/lists/*
 
 # Print Python and Java version
 RUN echo java -version
 RUN echo python3 --version
-
-# Install the packages we will need. Don't install pyspark using pip3 because
-# we will install from source so we can get other scripts.
-RUN pip3 install --user numpy pandas six ipython jupyter
-
-# Augment path so we can call ipython and jupyter
-# Note that there is no `python` or `pip` executable. Use `python3` and `pip3`.
-ENV PATH=$PATH:/root/.local/bin
 
 # Download spark tarball from the preferred mirror and install it in
 # /usr/local/spark. This will be the only copy of spark (or pyspark) that
@@ -51,9 +56,48 @@ ENV PYTHONPATH=$SPARK_HOME/python:$SPARK_HOME/python/lib/py4j-0.10.7-src.zip \
 #    SPARK_OPTS="--driver-java-options=-Xms1024M --driver-java-options=-Xmx4096M --driver-java-options=-Dlog4j.logLevel=info" \
     PATH=$PATH:$SPARK_HOME/bin
 
-# These are important because we don't have `python` executable.
-ENV PYSPARK_PYTHON=/usr/bin/python3 \
-    PYSPARK_DRIVER_PYTHON=/usr/bin/python3
+# We don't have `python` executable. Since some spark scripts have hardcoded
+# `python`, we will symlink a `python` but we aim to use the symlinked
+# `python` sparingly.
+RUN cd /usr/bin && ln -s /usr/bin/python3 /usr/bin/python
+
+# Set the default values
+ENV PYSPARK_PYTHON=/usr/bin/python \
+    PYSPARK_DRIVER_PYTHON=/usr/bin/python
+
+# Create $PLAYGROUND_USER non-interactively and add it to sudo group.
+# See
+# (1) https://stackoverflow.com/questions/25845538/how-to-use-sudo-inside-a-docker-container
+# (2) https://askubuntu.com/questions/7477/how-can-i-add-a-new-user-as-sudoer-using-the-command-line
+RUN useradd -m $PLAYGROUND_USER \
+    && adduser $PLAYGROUND_USER sudo \
+    && echo $PLAYGROUND_USER:$PLAYGROUND_USER_PASSWORD | chpasswd
+
+# We will setup environment variables and python packages for the
+# $PLAYGROUND_USER instead of root.
+USER $PLAYGROUND_USER
+
+# Note that there is no `pip` executable; use `pip3`.
+# Install the common packages we may need. Don't install pyspark using pip3
+# because we installed it from source already. We should be able to install
+# more packages by running `pip3 install --user <package-name>` within the
+# container later on, if needed.
+RUN pip3 install --user \
+    numpy \
+    pandas \
+    six \
+    ipython \
+    jupyter \
+    matplotlib \
+    seaborn \
+    scipy \
+    scikit-learn
+
+# Augment path so we can call ipython and jupyter
+ENV PATH=$PATH:/home/$PLAYGROUND_USER/.local/bin
+
+# Set the working directory as the home directory of $PLAYGROUND_USER
+WORKDIR /home/$PLAYGROUND_USER
 
 
 # from pyspark.sql import SparkSession
@@ -61,4 +105,7 @@ ENV PYSPARK_PYTHON=/usr/bin/python3 \
 # df = spark.createDataFrame([(_, _) for _ in range(1000)], 'x INT, y INT')
 
 # docker build . -t pyspark-playground
-# docker run -it pyspark-playground /bin/bash
+# docker run -it -p 8888:8888 --network my-temp-network pyspark-playground /bin/bash
+# jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root
+
+# FIXME: Add tini or you'll have PID starvation.
