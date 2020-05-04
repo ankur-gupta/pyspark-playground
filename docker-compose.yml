@@ -1,0 +1,54 @@
+version: "3.7"
+networks:
+  spark-network:
+    name: spark-network
+    driver: bridge
+services:
+  spark-master:
+    image: pyspark-playground:latest
+    container_name: spark-master
+    hostname: spark-master
+    networks:
+      - spark-network
+    ports:
+      # For Jupyter Notebook
+      - "8888:8888"
+      # SPARK_MASTER_WEBUI_PORT, so can use the Web UI to monitor
+      - "8080:8080"
+      # SPARK_MASTER_PORT, also for the Web UI
+      - "7077:7077"
+      # FIXME: Expose port 4040 so I can view the app's web UI page
+    environment:
+      - JUPYTER_PORT=8888
+      # These environment variable names are used in the scripts that spark
+      # ships with. See $SPARK_HOME/sbin/start-master.sh.
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_MASTER_WEBUI_PORT=8080
+      - SPARK_MASTER_PORT=7077
+    command:
+      # Sadly, this has to be hardcoded for now.
+      # This command will run as the last user in the Dockerfile for the image.
+      # (i.e., $PLAYGROUND_USER)
+      - /usr/local/spark/sbin/playground-start-master.sh
+  spark-worker:
+    # (1) We don't specify a custom name for the spark-worker because we want
+    #     to scale it. See https://docs.docker.com/compose/compose-file/#container_name.
+    # (2) We don't specify ports because we won't need to connect to the
+    #     workers from the host machine.
+    # FIXME: Actually, I need 8081 port exposed so I can access worker's WebUI
+    image: pyspark-playground:latest
+    networks:
+      - spark-network
+    depends_on:
+      - spark-master
+    environment:
+      # These environment variable will be used to connect the worker to master
+      - SPARK_MASTER_HOST=spark-master
+      - SPARK_MASTER_PORT=7077
+    command:
+      # Sadly, this has to be hardcoded for now.
+      # This command will run as the last user in the Dockerfile for the image.
+      # (i.e., $PLAYGROUND_USER)
+      - /usr/local/spark/sbin/playground-start-worker.sh
+
+# FIXME: Can we move all ports and environment variables to a separate file?
