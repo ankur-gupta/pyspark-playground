@@ -4,8 +4,8 @@
 # SPARK_HOME is defined in the Dockerfile (typical value "/usr/local/spark")
 "${SPARK_HOME}"/sbin/start-master.sh
 
-# We will symlink /data to /home/neo/data
-ln -s /data /home/neo/data
+# We will symlink /data to $HOME/data
+ln -s /data $HOME/data
 
 # Start jupyter notebook
 # FIXME: Do I need the ability to start a jupyter notebook separately from the spark cluster?
