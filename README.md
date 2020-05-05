@@ -1,5 +1,10 @@
 `docker-compose up --scale spark-worker=2`
 
+
+## Troubleshooting Notes
+
+
+
 ## Tested with
 | Name                       | Version |
 |----------------------------|---------|
@@ -14,7 +19,9 @@ This has been verified in this repository and this
 also says the same thing.
 
 2. Handy table for [Docker Compose versions](https://docs.docker.com/compose/compose-file/compose-versioning/).
-This webpage also has documentation for every keyword.
+
+3. [Compose file version 3 reference](https://docs.docker.com/compose/compose-file/)
+has documentation for every keyword used within `docker-compose.yml`.
 
 3. [Networking in Compose](https://docs.docker.com/compose/networking/) says
 that, by default, Docker Compose sets up a single network for the entire app

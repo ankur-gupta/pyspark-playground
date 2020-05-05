@@ -10,15 +10,27 @@ services:
     hostname: spark-master
     networks:
       - spark-network
+    volumes:
+      # This lets you share data between the host machine and the
+      # spark-master container back and forth. Please still make sure you've
+      # saved all the data you want before leaving exiting the container.
+      # We cannot use $HOME in the following string because it would be
+      # interpreted by the host machine and not the container.
+      - "./data:/data"
     ports:
       # For Jupyter Notebook
+      # Go to http://localhost:8888 in the browser.
       - "8888:8888"
       # SPARK_MASTER_WEBUI_PORT, so can use the Web UI to monitor
+      # Go to http://localhost:8080 in the browser.
       - "8080:8080"
       # SPARK_MASTER_PORT, also for the Web UI
       - "7077:7077"
-      # FIXME: Expose port 4040 so I can view the app's web UI page
+      # This port is needed to view the app page on in the Web UI.
+      # Go to http://localhost:4040 in the browser.
+      - "4040:4040"
     environment:
+      - JUPYTER_HOST_IP="0.0.0.0"
       - JUPYTER_PORT=8888
       # These environment variable names are used in the scripts that spark
       # ships with. See $SPARK_HOME/sbin/start-master.sh.
@@ -33,18 +45,24 @@ services:
   spark-worker:
     # (1) We don't specify a custom name for the spark-worker because we want
     #     to scale it. See https://docs.docker.com/compose/compose-file/#container_name.
-    # (2) We don't specify ports because we won't need to connect to the
-    #     workers from the host machine.
-    # FIXME: Actually, I need 8081 port exposed so I can access worker's WebUI
     image: pyspark-playground:latest
     networks:
       - spark-network
     depends_on:
       - spark-master
+    # SPARK_WORKER_WEBUI_PORT, so can use the Web UI to monitor
+    # Since we want to create multiple containers from this service and
+    # since we can't bind the same host port to multiple containers, we
+    # will not expose any ports. But if you wanted to run only one
+    # container from this service, you can add "8081:8081" below and then
+    # go to http://localhost:8081 in the browser.
+#    ports:
+#      - "8081:8081"
     environment:
       # These environment variable will be used to connect the worker to master
       - SPARK_MASTER_HOST=spark-master
       - SPARK_MASTER_PORT=7077
+      - SPARK_WORKER_WEBUI_PORT=8081
     command:
       # Sadly, this has to be hardcoded for now.
       # This command will run as the last user in the Dockerfile for the image.

@@ -118,17 +118,12 @@ ENV PATH=$PATH:/home/$PLAYGROUND_USER/.local/bin
 # See https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
 WORKDIR /home/$PLAYGROUND_USER
 
-# In a python shell:
-# from pyspark.sql import SparkSession
-# spark = SparkSession.builder.appName('my_app').getOrCreate()
-# df = spark.createDataFrame([(_, _) for _ in range(1000)], 'x INT, y INT')
-
 # docker build . -t pyspark-playground
 # docker run -it -p 8888:8888 --network my-temp-network pyspark-playground /bin/bash
 # The --ip is needed unless we set it in the config. See
 # https://github.com/codenvy/codenvy/issues/2427
 # jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root
-# FIXME: add a jupyter config to reduce verbosity of the command.
+# FIXME: Do I need to enable HTTPS like shown here? https://github.com/jupyter/docker-stacks/blob/master/base-notebook/jupyter_notebook_config.py
 # FIXME: Find the best place for the jupyter port and all other ports.
 # FIXME: Add tini or you'll have PID starvation. This is supposedly a known issue for jupyter within docker. https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#docker-cmd
 # FIXME: Do I need this (from https://registry.hub.docker.com/r/jupyter/scipy-notebook/dockerfile):
