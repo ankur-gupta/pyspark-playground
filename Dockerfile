@@ -108,11 +108,9 @@ RUN pip3 install --user \
 # Augment path so we can call ipython and jupyter
 # Using $HOME would just use the root user. $HOME works with the RUN directive
 # which uses the userid of the user in the relevant USER directive. But ENV
-# doesn't seem to use this. See
-# https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
+# doesn't seem to use this. See https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
 # This is probably why variables set by ENV directive are available to all
-# users as mentioned in
-# https://stackoverflow.com/questions/32574429/dockerfile-create-env-variable-that-a-user-can-see
+# users as mentioned in https://stackoverflow.com/questions/32574429/dockerfile-create-env-variable-that-a-user-can-see
 ENV PATH=$PATH:/home/$PLAYGROUND_USER/.local/bin
 
 # Set the working directory as the home directory of $PLAYGROUND_USER
@@ -132,7 +130,7 @@ WORKDIR /home/$PLAYGROUND_USER
 # jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root
 # FIXME: add a jupyter config to reduce verbosity of the command.
 # FIXME: Find the best place for the jupyter port and all other ports.
-# FIXME: Add tini or you'll have PID starvation.
+# FIXME: Add tini or you'll have PID starvation. This is supposedly a known issue for jupyter within docker. https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#docker-cmd
 # FIXME: Do I need this (from https://registry.hub.docker.com/r/jupyter/scipy-notebook/dockerfile):
 # # Import matplotlib the first time to build the font cache.
 # ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
