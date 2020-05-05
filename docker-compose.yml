@@ -43,8 +43,8 @@ services:
       # (i.e., $PLAYGROUND_USER)
       - /usr/local/spark/sbin/playground-start-master.sh
   spark-worker:
-    # (1) We don't specify a custom name for the spark-worker because we want
-    #     to scale it. See https://docs.docker.com/compose/compose-file/#container_name.
+    # We don't specify a custom name for the spark-worker because we want
+    # to scale it. See https://docs.docker.com/compose/compose-file/#container_name.
     image: pyspark-playground:latest
     networks:
       - spark-network

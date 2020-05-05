@@ -85,6 +85,16 @@ RUN chmod +x $SPARK_HOME/sbin/playground-start-master.sh
 COPY ./playground-start-worker.sh $SPARK_HOME/sbin/playground-start-worker.sh
 RUN chmod +x $SPARK_HOME/sbin/playground-start-worker.sh
 
+# Setup tini. Tini operates as a process subreaper for jupyter. This prevents
+# kernel crashes. Based on https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#docker-cmd
+# See https://github.com/krallin/tini/issues/8 for a detailed understanding of
+# what tini does.
+ENV TINI_VERSION="v0.18.0"
+ADD https://github.com/krallin/tini/releases/download/"${TINI_VERSION}"/tini /usr/bin/tini
+RUN chmod +x /usr/bin/tini
+ENTRYPOINT ["/usr/bin/tini", "--"]
+CMD ["jupyter", "notebook", "--port=8888", "--no-browser", "--ip=0.0.0.0"]
+
 # We will setup environment variables and python packages for the
 # $PLAYGROUND_USER instead of root.
 USER $PLAYGROUND_USER
@@ -94,6 +104,7 @@ USER $PLAYGROUND_USER
 # because we installed it from source already. We should be able to install
 # more packages by running `pip3 install --user <package-name>` within the
 # container later on, if needed.
+# We remove pip cache so docker can store the layer for later reuse.
 RUN pip3 install --user \
     numpy \
     pandas \
@@ -103,7 +114,8 @@ RUN pip3 install --user \
     matplotlib \
     seaborn \
     scipy \
-    scikit-learn
+    scikit-learn \
+  && rm -rf /home/$PLAYGROUND_USER/.cache/pip
 
 # Augment path so we can call ipython and jupyter
 # Using $HOME would just use the root user. $HOME works with the RUN directive
@@ -118,17 +130,10 @@ ENV PATH=$PATH:/home/$PLAYGROUND_USER/.local/bin
 # See https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
 WORKDIR /home/$PLAYGROUND_USER
 
-# docker build . -t pyspark-playground
-# docker run -it -p 8888:8888 --network my-temp-network pyspark-playground /bin/bash
-# The --ip is needed unless we set it in the config. See
-# https://github.com/codenvy/codenvy/issues/2427
-# jupyter notebook --ip 0.0.0.0 --port 8888 --allow-root
 # FIXME: Do I need to enable HTTPS like shown here? https://github.com/jupyter/docker-stacks/blob/master/base-notebook/jupyter_notebook_config.py
 # FIXME: Find the best place for the jupyter port and all other ports.
-# FIXME: Add tini or you'll have PID starvation. This is supposedly a known issue for jupyter within docker. https://jupyter-notebook.readthedocs.io/en/stable/public_server.html#docker-cmd
 # FIXME: Do I need this (from https://registry.hub.docker.com/r/jupyter/scipy-notebook/dockerfile):
 # # Import matplotlib the first time to build the font cache.
 # ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
 # RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
 #    fix-permissions /home/$NB_USER
-# FIXME: Add CMD and ENTRYPOINT with or without tini
