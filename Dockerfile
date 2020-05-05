@@ -131,7 +131,6 @@ ENV PATH=$PATH:/home/$PLAYGROUND_USER/.local/bin
 WORKDIR /home/$PLAYGROUND_USER
 
 # FIXME: Do I need to enable HTTPS like shown here? https://github.com/jupyter/docker-stacks/blob/master/base-notebook/jupyter_notebook_config.py
-# FIXME: Find the best place for the jupyter port and all other ports.
 # FIXME: Do I need this (from https://registry.hub.docker.com/r/jupyter/scipy-notebook/dockerfile):
 # # Import matplotlib the first time to build the font cache.
 # ENV XDG_CACHE_HOME /home/$NB_USER/.cache/

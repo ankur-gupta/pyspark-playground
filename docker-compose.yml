@@ -68,5 +68,3 @@ services:
       # This command will run as the last user in the Dockerfile for the image.
       # (i.e., $PLAYGROUND_USER)
       - /usr/local/spark/sbin/playground-start-worker.sh
-
-# FIXME: Can we move all ports and environment variables to a separate file?
