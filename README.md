@@ -36,8 +36,9 @@ This image creates a `sudo`-privileged user for you. You should be able to
 do everything (including installing packages using `apt-get`) as this user
 without having to become `root`.
 
-| Username | `neo`        |
+| Key      | Value        |
 |----------|--------------|
+| Username | `neo`        |
 | Password | `agentsmith` |
 
 #### Jupyter notebook
@@ -276,7 +277,7 @@ The same applies to ports on the host machine.
 
 ### Why is there no `https://` ?
 Both jupyter notebook and spark serve web pages. These web pages are served
-on `http://` instead of `https://`', by default. For jupyter, this can be
+on `http://` instead of `https://`, by default. For jupyter, this can be
 fixed as shown in
 [pyspark-notebook](https://github.com/jupyter/docker-stacks/blob/master/base-notebook/jupyter_notebook_config.py#L18)
 but this hasn't been implemented yet. For spark web UIs, this is more

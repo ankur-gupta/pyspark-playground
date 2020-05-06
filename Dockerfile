@@ -130,8 +130,7 @@ ENV PATH=$PATH:/home/$PLAYGROUND_USER/.local/bin
 # See https://stackoverflow.com/questions/57226929/dockerfile-docker-directive-to-switch-home-directory
 WORKDIR /home/$PLAYGROUND_USER
 
-# FIXME: Do I need to enable HTTPS like shown here? https://github.com/jupyter/docker-stacks/blob/master/base-notebook/jupyter_notebook_config.py
-# FIXME: Do I need this (from https://registry.hub.docker.com/r/jupyter/scipy-notebook/dockerfile):
+# FIXME: Should we build matplotlib cache? (from https://registry.hub.docker.com/r/jupyter/scipy-notebook/dockerfile):
 # # Import matplotlib the first time to build the font cache.
 # ENV XDG_CACHE_HOME /home/$NB_USER/.cache/
 # RUN MPLBACKEND=Agg python -c "import matplotlib.pyplot" && \
