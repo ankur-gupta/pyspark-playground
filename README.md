@@ -270,14 +270,8 @@ others are side effects of the design choices and those won't get "fixed".
 The ports, container names, and network names are "hardcoded" in
 `docker-compose.yml`. Removing this hardcoding would introduce unnecessary
 complexity that would be overkill for our use-case.
-
-### Not idempotent
-The ports and docker names in this repository are hardcoded. For now,
-removing the hardcoding seems difficult and is not worth it for our use case.
-This means that running `docker-compsose` twice without shutting it down
-properly might have unexpected behavior. This also means that if for some
-reason you have other unrelated docker containers/networks that have the
-same name as the ones used in this repository, you may have conflicts.
+This means that if for some reason you have other unrelated docker containers/networks
+that have the same name as the ones used in this repository, you may have conflicts.
 The same applies to ports on the host machine.
 
 ### Why is there no `https://` ?
@@ -292,7 +286,7 @@ Spark 3.0 is in around the corner and we'll wait until that becomes mainstream
 before we try and fix this issue ourselves. See `$REPO_ROOT/index.html` for a handy list
 of all posssible URLs.
 
-### Worker web UI cannot be accessed?
+### Worker web UI cannot be accessed
 This is a design choice. Since we want the cluster specified in
 `docker-compose` to be "scalable" in the number of spark slave containers,
 we cannot bind the same port `8081` on the host machine to multiple
