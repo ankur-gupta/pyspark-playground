@@ -12,5 +12,6 @@ ln -s /data $HOME/data
 jupyter notebook --ip "${JUPYTER_HOST_IP}" --port "${JUPYTER_PORT}"
 
 # # Based on https://stackoverflow.com/questions/45461263/how-can-i-keep-docker-container-running
+# We don't need this for spark-master because jupyter container runs until close anyways.
 # echo "Tailing just to not have the container exit"
 # tail -f /dev/null
