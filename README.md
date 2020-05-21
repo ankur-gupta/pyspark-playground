@@ -138,11 +138,11 @@ versions.
    # ...
    # http://127.0.0.1:8888/?token=s0m3a1phanum3rict0k3n
    ```
-   Use your browser to go to the address printed in terminal. You should be
-   able to run python code in the jupyter notebook. You should also be able
-   to create a one-container spark cluster from inside the jupyter notebook.
-   If you want to create a spark cluster over multiple containers, continue
-   to the next steps after exiting the container.
+   Use your browser to go to the address printed in terminal. If the jupyter
+   UI renders within your browser, this means that the jupyter server running
+   within the docker container created by the pyspark-playground is functioning
+   smoothly. If you are interested, you can create a notebook and you should be
+   able to run python code in the notebook.
 
    Exit the container by pressing `Control+C` in the
    terminal. Exiting is important because the above command binds host
