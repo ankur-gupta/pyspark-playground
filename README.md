@@ -28,7 +28,7 @@ below to install and run either of them.
 * Python 3.6 (this could be upgraded to 3.7+ later)
 * `pip3`
 * tini
-* spark and pyspark
+* Spark and pyspark
 * jupyter and ipython
 * basic python packages such as numpy, pandas, matplotlib, scikit-learn, scipy and others
 
@@ -48,7 +48,7 @@ at port `8888`. The port `8888` is not exposed in the `Dockerfile` you can
 expose it and bind it to a port on the host machine via command line.
 
 If you run a container based on this image without using
-the `docker-compose.yml`, then a spark cluster won't be started for you, but
+the `docker-compose.yml`, then a Spark cluster won't be started for you, but
 you can start you own Spark cluster either via command-line or via python
 code within the jupyter notebook.
 
@@ -65,13 +65,13 @@ only the first docker build is slow and subsequent builds are fast.
 
 ### `docker-compose.yml`
 This file sets up a pyspark cluster with these specifications:
-* a separate docker network for the spark cluster
-* a spark master container that runs the spark driver
-* one or more spark slave containers that run spark workers
+* a separate docker network for the Spark cluster
+* a Spark master container that runs the Spark driver
+* one or more Spark slave containers that run Spark workers
 
-When you run `docker-compose`, the spark cluster is started for you and
+When you run `docker-compose`, the Spark cluster is started for you and
 a jupyter notebook runs on port `8888`. Any pyspark code you write in the
-jupyter notebook simply needs to "attach" to the running spark cluster.
+jupyter notebook simply needs to "attach" to the running Spark cluster.
 
 #### `data/` mount
 This repository contains a
@@ -163,9 +163,9 @@ versions.
    # neo@db6739ba2186:~$
    ```
 
-5. **Create a spark cluster using docker compose**
+5. **Create a Spark cluster using docker compose**
    ```bash
-   # Create 1 spark master and 2 spark slave containers.
+   # Create 1 Spark master and 2 Spark slave containers.
    # You increase `2` to something more or you can omit the
    # `--scale spark-worker=2` part completely.
    cd $REPO_ROOT
@@ -181,24 +181,24 @@ versions.
    Use your browser to go to the address printed in terminal. You should
    see an already mounted folder called `data` in your jupyter web UI.
    Go to `data/spark-demo.ipynb` which contains some starter code to attach
-   your pyspark session to the already running spark cluster. Try running the
+   your pyspark session to the already running Spark cluster. Try running the
    code. You can click on the URLs shown in the `data/spark-demo.ipynb`
-   notebook for various spark web UIs.
+   notebook for various Spark web UIs.
 
-6. (Optional) **Run bash within spark master**. Sometimes you want to access spark master to
+6. (Optional) **Run bash within Spark master**. Sometimes you want to access Spark master to
    do other things such as call `ps` to check up on cluster or jupyter. You may also want to
    run `ipython` separately, in addition to the jupyter notebook that's already running.
    This can be done easily as follows. Keep the `docker-compose` running and in a new terminal,
    type:
    ```bash
-   # The spark master container's name is spark-master (see docker-compose.yml)
+   # The Spark master container's name is spark-master (see docker-compose.yml)
    # Run on host machine's terminal:
    docker exec -it spark-master /bin/bash
    # To run a command as administrator (user "root"), use "sudo <command>".
    # See "man sudo_root" for details.
    # neo@spark-master:~$
    ```
-   You're now inside the `spark-master` container. The spark cluster should already be running.
+   You're now inside the `spark-master` container. The Spark cluster should already be running.
    You can check up on it like this.
    ```bash
    neo@spark-master:~$ ps aux | grep "java"
@@ -206,7 +206,7 @@ versions.
    # neo        209  0.0  0.0  11464   960 pts/1    S+   20:49   0:00 grep --color=auto java
    ```
    You can run any command here including `ipython`. This will be completely
-   separate from the jupyter notebook that's already running. Since spark cluster
+   separate from the jupyter notebook that's already running. Since Spark cluster
    if already running you just need to attach your ipython's pyspark to it (only
    if you want to run pyspark within ipython).
    ```bash
@@ -277,11 +277,11 @@ that have the same name as the ones used in this repository, you may have confli
 The same applies to ports on the host machine.
 
 ### Why is there no `https://` ?
-Both jupyter notebook and spark serve web pages. These web pages are served
+Both jupyter notebook and Spark serve web pages. These web pages are served
 on `http://` instead of `https://`, by default. For jupyter, this can be
 fixed as shown in
 [pyspark-notebook](https://github.com/jupyter/docker-stacks/blob/master/base-notebook/jupyter_notebook_config.py#L18)
-but this hasn't been implemented yet. For spark web UIs, this is more
+but this hasn't been implemented yet. For Spark web UIs, this is more
 difficult as mentioned
 [here](https://stackoverflow.com/questions/44936756/how-to-configure-spark-standalones-web-ui-for-https).
 Spark 3.0 is in around the corner and we'll wait until that becomes mainstream
@@ -290,7 +290,7 @@ of all posssible URLs.
 
 ### Worker web UI cannot be accessed
 This is a design choice. Since we want the cluster specified in
-`docker-compose` to be "scalable" in the number of spark slave containers,
+`docker-compose` to be "scalable" in the number of Spark slave containers,
 we cannot bind the same port `8081` on the host machine to multiple
 worker web UIs. Looking at the worker web UI is a less often required
 feature.
