@@ -1,10 +1,11 @@
 ## PySpark Playground
 This repository sets up a "scalable" pyspark cluster using docker compose.
-This repository is intended for learning and experimentation only. It should
-**NOT** be used any production work.
+This repository is intended for learning and experimentation only. 
 
-For example, this repository creates a user inside the container that has
-`sudo` privileges and whose credentials (username/password) hardcoded in the
+#### Could this set up be used in production??
+
+This should **NOT** be used any production work. For example, this repository creates a user inside the container that has
+`sudo` privileges and whose credentials (username/password) are hardcoded in the
 Dockerfile. This gets worse because the network setup by docker compose
 allows unhindered interaction with public internet.
 
@@ -44,11 +45,11 @@ without having to become `root`.
 #### Jupyter notebook
 By default, running a container from this image would run a jupyter notebook
 at port `8888`. The port `8888` is not exposed in the `Dockerfile` you can
-expose it and bind it to a port on host machine via command line.
+expose it and bind it to a port on the host machine via command line.
 
 If you run a container based on this image without using
-the `docker-compose.yml`, then a spark cluster won't be started for you but
-you can start you own spark cluster either via command-line or via python
+the `docker-compose.yml`, then a spark cluster won't be started for you, but
+you can start you own Spark cluster either via command-line or via python
 code within the jupyter notebook.
 
 #### Why such a big linux image?
