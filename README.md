@@ -1,6 +1,8 @@
 ## PySpark Playground
 This repository sets up a "scalable" pyspark cluster using docker compose.
-This repository is intended for learning and experimentation only. 
+This repository is intended for learning and experimentation only.
+
+![Container diagram](./container-diagram.png)
 
 #### Could this set up be used in production??
 
