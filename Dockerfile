@@ -39,14 +39,14 @@ RUN echo python3 --version
 # PYTHONPATH to get pyspark from /usr/local/spark/python.
 # This line is adapted from https://registry.hub.docker.com/r/jupyter/pyspark-notebook/dockerfile.
 # See Modified BSD License at https://github.com/jupyter/docker-stacks/blob/master/LICENSE.md.
-ENV APACHE_SPARK_VERSION=2.4.5 \
+ENV APACHE_SPARK_VERSION=3.0.0 \
     HADOOP_VERSION=2.7
 RUN cd /tmp && \
     wget -q $(wget -qO- https://www.apache.org/dyn/closer.lua/spark/spark-${APACHE_SPARK_VERSION}/spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz\?as_json | \
     python3 -c "import sys, json; content=json.load(sys.stdin); print(content['preferred']+content['path_info'])") && \
-    echo "2426a20c548bdfc07df288cd1d18d1da6b3189d0b78dee76fa034c52a4e02895f0ad460720c526f163ba63a17efae4764c46a1cd8f9b04c60f9937a554db85d2 *spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" | sha512sum -c - && \
-    tar xzf spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz -C /usr/local --owner root --group root --no-same-owner && \
-    rm spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz
+    echo "F5652835094D9F69EB3260E20CA9C2D58E8BDF85A8ED15797549A518B23C862B75A329B38D4248F8427E4310718238C60FAE0F9D1AFB3C70FB390D3E9CCE2E49 *spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" | sha512sum -c - && \
+    tar xzf "spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz" -C /usr/local --owner root --group root --no-same-owner && \
+    rm "spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION}.tgz"
 RUN cd /usr/local && ln -s spark-${APACHE_SPARK_VERSION}-bin-hadoop${HADOOP_VERSION} spark
 
 # Spark/PySpark configuration. Update both PYTHONPATH and PATH to get
