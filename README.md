@@ -4,7 +4,7 @@ This repository is intended for learning and experimentation only.
 
 ![Container diagram](./container-diagram.png)
 
-#### Could this set up be used in production??
+#### Could this set up be used in production?
 
 This should **NOT** be used any production work. For example, this repository creates a user inside the container that has
 `sudo` privileges and whose credentials (username/password) are hardcoded in the
@@ -86,6 +86,28 @@ saved files. However, you should manually check (using another terminal window
 or using the host machine's file manager) that you have all the files you
 care about in your host machine before shutting down docker compose. You can
 always download your jupyter notebook using jupyter's web UI.
+
+## Use without installing
+If you just want to use the docker image, you don't need build it yourself. 
+The image may be pulled from 
+[DockerHub](https://hub.docker.com/r/ankurio/pyspark-playground) (recommended) 
+or from 
+[GitHub Packages](https://github.com/ankur-gupta/pyspark-playground/packages)
+(this requires [credentials](https://github.community/t/docker-pull-from-public-github-package-registry-fail-with-no-basic-auth-credentials-error/16358)
+even though this repository is public).
+
+```bash
+# From DockerHub (recommended)
+docker pull ankurio/pyspark-playground
+
+# From GitHub Packages (as of now, this requires authenticating even though the repository is public)
+docker pull docker.pkg.github.com/ankur-gupta/pyspark-playground/pyspark-playground:latest
+```
+
+If you don't want to build the docker image but still use `docker compose`, simply
+edit the image names in the `docker-compose.yml` file from `pyspark-playground:latest` to 
+`ankurio/pyspark-playground:latest`.
+
 
 ## Installation
 This repository have been tested with these versions. The versions are
