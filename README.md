@@ -298,6 +298,12 @@ worker web UIs. Looking at the worker web UI is a less often required
 feature.
 
 ## Troubleshooting
+### `docker build` fails because Spark version changes
+Older [Apache Spark versions](https://spark.apache.org/downloads.html) are discontinued and
+become unavailable. This causes the docker image build step to fail. This can be easily fixed
+by modifying the `APACHE_SPARK_VERSION` and the corresponding checksum in the Dockerfile. Please
+file an issue if you encounter this and we will fix this quickly.
+
 ### Port `8888` already allocated
 You cannot run multiple web servers
 (such as jupyter notebooks) on the same host machine port. When you try to
